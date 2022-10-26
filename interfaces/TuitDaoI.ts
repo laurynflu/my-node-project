@@ -1,6 +1,8 @@
 import Tuit from "../models/Tuit";
-import {Query} from "mongoose";
 
+/**
+ * @file Declares API for Tuits related data access object methods
+ */
 export default interface TuitDaoI {
     findAllTuits(): Promise<Tuit[]>;
     findTuitsByUser(userid: string): Promise<Tuit[]>;

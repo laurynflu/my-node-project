@@ -1,6 +1,8 @@
 import Message from "../models/Message";
-import userModel from "../mongoose/UserModel";
 
+/**
+ * @file Declares API for Messages related data access object methods
+ */
 export default interface MessageDaoI {
     userMessagesUser (from: string, to: string, message: Message): Promise<Message>;
     userDeletesMessage (from: string, to: string): Promise<any>;

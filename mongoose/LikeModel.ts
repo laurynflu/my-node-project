@@ -1,3 +1,6 @@
+/**
+ * @file Implements mongoose model in the likes collection
+ */
 import mongoose from "mongoose";
 import LikeSchema from "./LikeSchema";
 

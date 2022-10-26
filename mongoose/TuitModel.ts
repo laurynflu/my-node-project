@@ -1,3 +1,6 @@
+/**
+ * @file Implements mongoose model in the tuits collection
+ */
 import mongoose from "mongoose";
 import TuitSchema from "./TuitSchema";
 
