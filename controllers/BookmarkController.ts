@@ -9,11 +9,10 @@ export default class BookmarkController implements BookmarkControllerI {
     public static getInstance = (app: Express): BookmarkController => {
         if (BookmarkController.bookmarkController == null) {
             BookmarkController.bookmarkController = new BookmarkController();
-            app.get('/api/users', BookmarkController.bookmarkController.userBookmarksTuit);
-            app.get('/api/users/:userid', BookmarkController.bookmarkController.userUnbookmarksTuit);
-            app.post('/api/users', BookmarkController.bookmarkController.findAllBookmarkedTuits);
-            app.post('/api/users', BookmarkController.bookmarkController.findBookmarkedTuit);
-            app.post('/api/users', BookmarkController.bookmarkController.findAllUsersThatBookmarkedTuit);
+            app.post('/api/users/:userid/bookmarks/:tuitid', BookmarkController.bookmarkController.userBookmarksTuit);
+            app.delete('/api/users/:userid/bookmarks/:tuitid', BookmarkController.bookmarkController.userUnbookmarksTuit);
+            app.get('/api/users/:userid/bookmarks', BookmarkController.bookmarkController.findAllBookmarkedTuits);
+            app.get('/api/tuits/:tuitid/bookmarks', BookmarkController.bookmarkController.findAllUsersThatBookmarkedTuit);
         }
         return BookmarkController.bookmarkController;
     }
@@ -37,13 +36,6 @@ export default class BookmarkController implements BookmarkControllerI {
         const userid = req.params.userid;
         const bookmarkTuit = await BookmarkController.bookmarkDao.findAllBookmarkedTuits(userid);
         res.json(bookmarkTuit);
-    }
-
-    findBookmarkedTuit = async (req: Request, res: Response) => {
-        const userid = req.params.userid;
-        const tuitid = req.params.tuidid;
-        const tuit = await BookmarkController.bookmarkDao.findBookmarkedTuit(userid, tuitid);
-        res.json(tuit);
     }
 
     findAllUsersThatBookmarkedTuit = async (req: Request, res: Response) => {

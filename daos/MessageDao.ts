@@ -27,9 +27,4 @@ export default class MessageDao implements MessageDaoI {
     findAllMessagesReceived = async (userid: string): Promise<Message[]> =>
         MessageModel.find({to: userid}).populate("message", "from").exec();
 
-    findUsersThatMessagedMe = async (userid: string): Promise<Message[]> =>
-        MessageModel.find({to: userid}).populate("from").exec();
-
-    findUsersIHaveMessaged = async (userid: string): Promise<Message[]> =>
-        MessageModel.find({to: userid}).populate("to").exec();
 }

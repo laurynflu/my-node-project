@@ -9,12 +9,10 @@ export default class MessageController implements MessageControllerI {
     public static getInstance = (app: Express): MessageController => {
         if (MessageController.messageController == null) {
             MessageController.messageController = new MessageController();
-            app.get('/api/users', MessageController.messageController.findAllMessagesSent);
-            app.get('/api/users/:userid', MessageController.messageController.findAllMessagesReceived);
-            app.post('/api/users', MessageController.messageController.findUsersThatMessagedMe);
-            app.post('/api/users', MessageController.messageController.findUsersIHaveMessaged);
-            app.delete('/api/users/:userid', MessageController.messageController.userMessagesUser);
-            app.put('/api/users/:userid', MessageController.messageController.userDeletesMessage);
+            app.post("/api/users/:from/messages/:to", MessageController.messageController.userMessagesUser);
+            app.get("/api/users/:from/messages/sent", MessageController.messageController.findAllMessagesSent);
+            app.get("/api/users/:by/messages/received", MessageController.messageController.findAllMessagesReceived);
+            app.delete("/api/users/:uid/messages/:mid", MessageController.messageController.userDeletesMessage);
         }
         return MessageController.messageController;
     }
@@ -30,18 +28,6 @@ export default class MessageController implements MessageControllerI {
         const userid = req.params.userid;
         const message = await MessageController.messageDao.findAllMessagesReceived(userid);
         res.json(message);
-    }
-
-    findUsersThatMessagedMe = async (req: Request, res: Response) => {
-        const userid = req.params.userid;
-        const users = await MessageController.messageDao.findUsersThatMessagedMe(userid);
-        res.json(users);
-    }
-
-    findUsersIHaveMessaged = async (req: Request, res: Response) => {
-        const userid = req.params.userid;
-        const users = await MessageController.messageDao.findUsersIHaveMessaged(userid);
-        res.json(users);
     }
 
     userMessagesUser = async (req: Request, res: Response) => {

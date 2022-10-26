@@ -25,10 +25,4 @@ export default class FollowDao implements FollowDaoI {
 
     whoDoIFollow = async (iFollow: string): Promise<Follow[]> =>
         FollowModel.find({follower: iFollow}).populate("following").exec();
-
-    findUserIAmFollowing = async (me: string, user: string): Promise<any> =>
-        FollowModel.findOne({follower: me, following: user}).populate("following").exec();
-
-    findUserFollowingMe = async (user: string, me: string): Promise<any> =>
-        FollowModel.findOne({follower: user, following: me}).populate("follower").exec();
 }

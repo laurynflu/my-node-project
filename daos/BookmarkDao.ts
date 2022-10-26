@@ -1,7 +1,6 @@
 import Bookmark from "../models/Bookmark";
 import BookmarkModel from "../mongoose/BookmarkModel";
 import BookmarkDaoI from "../interfaces/BookmarkDaoI";
-import FollowController from "../controllers/FollowController";
 
 export default class BookmarkDao implements BookmarkDaoI {
     private static bookmarkDao: BookmarkDao | null = null;

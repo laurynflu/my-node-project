@@ -9,12 +9,10 @@ export default class FollowController implements FollowControllerI {
     public static getInstance = (app: Express): FollowController => {
         if (FollowController.followController == null) {
             FollowController.followController = new FollowController();
-            app.get('/api/users', FollowController.followController.userFollowsUser);
-            app.get('/api/users/:userid', FollowController.followController.userUnfollowsUser);
-            app.post('/api/users', FollowController.followController.whoFollowsMe);
-            app.post('/api/users', FollowController.followController.whoDoIFollow);
-            app.post('/api/users', FollowController.followController.findUserIAmFollowing);
-            app.post('/api/users', FollowController.followController.findUserFollowingMe);
+            app.post("/api/users/:followerId/follows/:followerId", FollowController.followController.userFollowsUser)
+            app.delete("/api/users/:userid/follows/:followerId", FollowController.followController.userUnfollowsUser)
+            app.get("/api/users/:userid/follows", FollowController.followController.whoDoIFollow)
+            app.get("/api/users/:userid/follows/followers", FollowController.followController.whoFollowsMe)
         }
         return FollowController.followController;
     }
@@ -43,20 +41,6 @@ export default class FollowController implements FollowControllerI {
     whoDoIFollow = async (req: Request, res: Response) => {
         const me = req.params.me;
         const following = await FollowController.followDao.whoDoIFollow(me);
-        res.json(following);
-    }
-
-    findUserIAmFollowing = async (req: Request, res: Response) => {
-        const me = req.params.me;
-        const user = req.params.user;
-        const following = await FollowController.followDao.findUserIAmFollowing(me, user);
-        res.json(following);
-    }
-
-    findUserFollowingMe = async (req: Request, res: Response) => {
-        const me = req.params.me;
-        const user = req.params.user;
-        const following = await FollowController.followDao.findUserFollowingMe(user, me);
         res.json(following);
     }
 
