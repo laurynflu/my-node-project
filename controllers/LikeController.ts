@@ -62,7 +62,7 @@ export default class LikeController implements LikeControllerI {
      */
     findAllTuitsLiked = (req: Request, res: Response) => {
         const uid = req.params.uid;
-        const profile = req.session['profile'];
+        const profile = req.res['profile'];
         const userId = uid === "me" && profile ?
             profile._id : uid;
 
