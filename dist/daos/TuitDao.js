@@ -77,6 +77,11 @@ class TuitDao {
             return yield TuitModel_1.default.deleteOne({ _id: tuitid });
         });
     }
+    updateLikes =
+        async (tid, newStats) =>
+            TuitModel.updateOne(
+                {_id: tid},
+                {$set: {stats: newStats}});
 }
 exports.default = TuitDao;
 TuitDao.tuitDao = null;

@@ -5,6 +5,8 @@ import {Request, Response, Express} from "express";
 import LikeDao from "../daos/LikeDao";
 import TuitDao from "../daos/TuitDao";
 import LikeControllerI from "../interfaces/LikeControllerI";
+const session = require("express-session");
+
 
 /**
  * @class LikeController Implements RESTful Web service API for like resource.
@@ -44,6 +46,8 @@ export default class LikeController implements LikeControllerI {
             app.post("/api/users/:userid/likes/:tuitid", LikeController.likeController.userLikesTuit);
             app.delete("/api/users/:userid/unlikes/:tuitid", LikeController.likeController.userUnlikesTuit);
             app.put("/api/users/:uid/likes/:tid", LikeController.likeController.userTogglesTuitLikes);
+            app.put("/api/users/:uid/likes/:tid", LikeController.likeController.userTogglesTuitDislikes);
+
         }
         return LikeController.likeController;
     }
@@ -57,9 +61,21 @@ export default class LikeController implements LikeControllerI {
      * body formatted as JSON arrays containing the liked tuit objects
      */
     findAllTuitsLiked = (req: Request, res: Response) => {
-        LikeController.likeDao.findAllTuitsLiked(req.params.userid)
-            .then(likes => res.json(likes));
+        const uid = req.params.uid;
+        const profile = req.session['profile'];
+        const userId = uid === "me" && profile ?
+            profile._id : uid;
+
+        LikeController.likeDao.findAllTuitsLiked(userId)
+            .then(likes => {
+                const likesNonNullTuits =
+                    likes.filter(like => like.tuit);
+                const tuitsFromLikes =
+                    likesNonNullTuits.map(like => like.tuit);
+                res.json(tuitsFromLikes);
+            });
     }
+
 
     /**
      * All users that liked a tuit

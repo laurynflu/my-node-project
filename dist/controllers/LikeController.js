@@ -64,6 +64,34 @@ class LikeController {
             LikeController.likeDao.userUnlikesTuit(req.params.userid, req.params.tuitid)
                 .then(likeStatus => res.json(likeStatus));
         };
+        this.userTogglesTuitLikes = async (req, res) => {
+            const uid = req.params.uid;
+            const tid = req.params.tid;
+            const profile = req.session['profile'];
+            const userId = uid === "me" && profile ?
+                profile._id : uid;
+            try {
+                const userAlreadyLikedTuit = await likeDao
+                    .findUserLikesTuit(userId, tid);
+                const howManyLikedTuit = await likeDao
+                    .countHowManyLikedTuit(tid);
+                let tuit = await tuitDao.findTuitById(tid);
+                if (userAlreadyLikedTuit) {
+                    await likeDao.userUnlikesTuit(userId, tid);
+                    tuit.stats.likes = howManyLikedTuit - 1;
+                } else {
+                    await likeDao.userLikesTuit(userId, tid);
+                    tuit.stats.likes = howManyLikedTuit + 1;
+                };
+                await tuitDao.updateLikes(tid, tuit.stats);
+                res.sendStatus(200);
+            } catch (e) {
+                res.sendStatus(404);
+            }
+        }
+
+        app.put("/api/users/:uid/likes/:tid",
+            userTogglesTuitLikes);
     }
 }
 exports.default = LikeController;

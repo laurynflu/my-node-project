@@ -43,6 +43,23 @@ class LikeDao {
          * @returns Promise To be notified when like is removed from the database
          */
         this.userUnlikesTuit = (userid, tuitid) => __awaiter(this, void 0, void 0, function* () { return LikeModel_1.default.deleteOne({ tuit: tuitid, likedBy: userid }); });
+
+        this.findUserLikesTuit =
+            async (uid, tid) =>
+                LikeModel.findOne(
+                    {tuit: tid, likedBy: uid});
+
+        this.countHowManyLikedTuit =
+            async (tid) =>
+                LikeModel.count({tuit: tid});
+
+        this.userLikesTuit =
+            async (uid, tid) =>
+                LikeModel.create({tuit: tid, likedBy: uid});
+
+        this.userUnlikesTuit =
+            async (uid, tid) =>
+                LikeModel.deleteOne({tuit: tid, likedBy: uid});
     }
 }
 exports.default = LikeDao;
@@ -57,4 +74,6 @@ LikeDao.getInstance = () => {
     }
     return LikeDao.likeDao;
 };
+
+
 //# sourceMappingURL=LikeDao.js.map
