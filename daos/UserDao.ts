@@ -60,6 +60,11 @@ export default class UserDao implements UserDaoI {
         );
     }
 
+    /**
+     * Use UserModel to find user by username
+     * @param {string} username username
+     * @returns Promise To be notified when user is retrieved from the database
+     */
     async findUserByUsername(username: string): Promise<any> {
         return await UserModel.findOne({username});
     }
@@ -100,10 +105,20 @@ export default class UserDao implements UserDaoI {
         return UserModel.updateOne({_id: userid},
             {$set: {username: user.username, password: user.password}});
     }
+
+    /**
+     * Delete all users
+     * @returns Promise To be notified when users are removed from the database
+     */
     async deleteAllUsers(): Promise<any> {
         return await UserModel.deleteMany({});
     }
 
+    /**
+     * Delete user by username
+     * @param {string} username username of user to be removed
+     * @returns Promise To be notified when user is removed from the database
+     */
     async deleteUsersByUsername(username: string): Promise<any> {
         return await UserModel.deleteMany({username});
     }
