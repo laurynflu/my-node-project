@@ -32,7 +32,15 @@ export default class LikeDao implements LikeDaoI {
      * @returns Promise To be notified when the likes are retrieved from database
      */
     findAllTuitsLiked = async (userid: string): Promise<Like[]> =>
-        LikeModel.find({likedBy: userid}).populate("tuit").exec();
+        LikeModel
+            .find({likedBy: userid, type: "LIKED"})
+            .populate({
+                path: "tuit",
+                populate: {
+                    path: "postedBy"
+                }
+            })
+            .exec();
 
     /**
      * Use LikeModel to find all users that liked the tuit
@@ -40,7 +48,21 @@ export default class LikeDao implements LikeDaoI {
      * @returns Promise To be notified when the likes are retrieved from database
      */
     findAllUsersThatLikedTuit = async (tuitid: string): Promise<Like[]> =>
-        LikeModel.find({tuit: tuitid}).populate("likedBy").exec();
+        LikeModel
+            .find({tuit: tuitid, type: "LIKED"})
+            .populate("likedBy")
+            .exec();
+
+    findAllTuitsDislikedByUser = async (userid: string): Promise<Like[]> =>
+        LikeModel
+            .find({likedBy: userid, type: "DISLIKED"})
+            .populate({
+                path: "tuit",
+                populate: {
+                    path: "postedBy"
+                }
+            })
+            .exec();
 
     /**
      * User likes a tuit
@@ -49,7 +71,7 @@ export default class LikeDao implements LikeDaoI {
      * @returns Promise To be notified when like is inserted into the database
      */
     userLikesTuit= async (userid: string, tuitid: string): Promise<any> =>
-        LikeModel.create({tuit: tuitid, likedBy:userid});
+        LikeModel.create({tuit: tuitid, likedBy: userid, type: "LIKED"});
 
     /**
      * User unlikes a tuit
@@ -58,5 +80,27 @@ export default class LikeDao implements LikeDaoI {
      * @returns Promise To be notified when like is removed from the database
      */
     userUnlikesTuit = async (userid: string, tuitid: string): Promise<any> =>
-        LikeModel.deleteOne({tuit: tuitid, likedBy:userid});
+        LikeModel.deleteOne({tuit: tuitid, likedBy: userid});
+
+    findUserLikesTuit = async (userid: string, tuitid: string): Promise<Like> =>
+        LikeModel.findOne({tuit: tuitid, likedBy: userid, type: "LIKED"});
+
+    findUserDislikesTuit = async (userid: string, tuitid: string): Promise<Like> =>
+        LikeModel.findOne({tuit: tuitid, likeBy: userid, type: "DISLIKED"});
+
+    countHowManyLikedTuit = async (tuitid) =>
+        LikeModel.count({tuit: tuitid, type: "LIKED"});
+
+    countHowManyDislikedTuit = async (tuitid) =>
+        LikeModel.count({tuit: tuitid, type: "DISLIKE"});
+
+    userDislikesTuit = async (userid: string, tuitid: string): Promise<any> =>
+        LikeModel.create({tuit: tuitid, likedBy: userid, type: "DISLIKED"});
+
+    updateLike = async (userid: string, tuitid: string, type: string): Promise<any> => {
+        return LikeModel.updateOne(
+            {tuit: tuitid, likedBy: userid},
+            {$set: {type}})
+    }
+
 }

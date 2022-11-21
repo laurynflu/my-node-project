@@ -60,6 +60,10 @@ export default class UserDao implements UserDaoI {
         );
     }
 
+    async findUserByUsername(username: string): Promise<any> {
+        return await UserModel.findOne({username});
+    }
+
     /**
      * Create a user
      * @param {User} userid user to be added to database
@@ -96,4 +100,12 @@ export default class UserDao implements UserDaoI {
         return UserModel.updateOne({_id: userid},
             {$set: {username: user.username, password: user.password}});
     }
+    async deleteAllUsers(): Promise<any> {
+        return await UserModel.deleteMany({});
+    }
+
+    async deleteUsersByUsername(username: string): Promise<any> {
+        return await UserModel.deleteMany({username});
+    }
+
 }
